@@ -36,11 +36,15 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {   
+        $request->merge([
+            'name' => filter_var($request->name, FILTER_SANITIZE_STRING),
+            'slug' => filter_var($request->name, FILTER_SANITIZE_STRING)
+        ]);
         $rules = [  
             'name'              => 'required|string|min:3',
-            'price'             => 'required|numeric|min:1',
+            'price'             => 'required|numeric|min:0',
             'slug'              => 'required|string|max:255|unique:products|min:3',
-            'stock_quantity'    => 'required|integer|min:1',
+            'stock_quantity'    => 'required|integer|min:1|min:0',
             'images.*'          => 'image|mimes:jpeg,png,jpg|max:2048',
             'categories'        => 'required|array', 
             'categories.*'      => 'exists:categories,id',
@@ -74,10 +78,15 @@ class ProductController extends Controller
 
     public function update(Request $request, $id) { 
         try {
+            $request->merge([
+                'name' => filter_var($request->name, FILTER_SANITIZE_STRING),
+                'slug' => filter_var($request->name, FILTER_SANITIZE_STRING)
+            ]);
             $rules = [
                 'name'              => 'sometimes|required|string',
-                'price'             => 'sometimes|required|numeric',
-                'stock_quantity'    => 'sometimes|required|integer',
+                'slug'              => 'required|string|max:255|unique:products,slug|min:3',
+                'price'             => 'sometimes|required|numeric|min:0',
+                'stock_quantity'    => 'sometimes|required|integer|min:0',
                 'categories'        => 'sometimes|array',
                 'categories.*'      => 'exists:categories,id',
                 'images.*'          => 'image|mimes:jpeg,png,jpg,gif|max:2048', 

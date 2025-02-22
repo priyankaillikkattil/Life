@@ -15,6 +15,10 @@ class AuthController extends Controller
     /**     User Registration   **/
     public function register(Request $request)
     {
+        $request->merge([   'name'      => filter_var($request->name, FILTER_SANITIZE_STRING),
+                            'email'     => filter_var($request->email, FILTER_SANITIZE_EMAIL),
+                            'password'  => filter_var($request->password, FILTER_SANITIZE_STRING),
+        ]);
         $rules = [      'name'      => 'required|string|max:255|min:3',
                         'email'     => 'required|string|email|max:255|unique:users',
                         'password'  => 'required|string|min:6|confirmed',
@@ -44,6 +48,11 @@ class AuthController extends Controller
     /**  User Login **/
     public function login(Request $request)
     {
+        $request->merge([           
+            'email'     => filter_var($request->email, FILTER_SANITIZE_EMAIL),
+            'password'  => filter_var($request->password, FILTER_SANITIZE_STRING),
+        ]);
+
         $request->validate([
             'email'    => 'required|string|email',
             'password' => 'required|string',

@@ -19,6 +19,9 @@ class CategoryController extends Controller
     /**    Create a New Category       **/
     public function store(Request $request)
     {
+        $request->merge([
+            'name' => filter_var($request->name, FILTER_SANITIZE_STRING),
+        ]);
         $rules  = [
             'name' => 'required|string|unique:categories|max:255'
         ];
@@ -44,7 +47,9 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::findOrFail($id);
-
+        $request->merge([
+            'name' => filter_var($request->name, FILTER_SANITIZE_STRING),
+        ]);
         $request->validate([
             'name' => 'required|string|unique:categories,name,' . $id . '|max:255'
         ]);
