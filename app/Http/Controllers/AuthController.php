@@ -94,4 +94,7 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Successfully logged out']);
     }
+    public function index(){
+        return response()->json(['error' => 'Unauthorized access'], 403);
+    }        
 }
