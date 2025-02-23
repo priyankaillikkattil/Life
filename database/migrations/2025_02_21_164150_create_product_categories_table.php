@@ -25,7 +25,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_category', function (Blueprint $table) {
-                $table->dropColumn('deleted_at');
-        });    }
+             
+        Schema::table('product_categories', function (Blueprint $table) {
+            $table->dropForeign(['product_id']); // Replace with your actual foreign key column
+        });
+    }
 };

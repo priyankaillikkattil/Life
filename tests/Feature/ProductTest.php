@@ -6,15 +6,17 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class ProductTest extends TestCase
-{
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
+class ProductTest extends TestCase {
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
+    public function test_product_creation() {
+        $response = $this->postJson('/api/products', [
+            'name' => 'Test Product',
+            'price' => 100,
+            'slug' => 'test-product',
+            'stock_quantity' => 10,
+            'categories' => [1, 2],
+        ]);
+        $response->assertStatus(201);
     }
 }
