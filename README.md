@@ -7,6 +7,7 @@ This is a Laravel-based project with the following features:
 -  **Docker Containerization**
 -  **Caching for Product Listings**
 -  **Role-Based Authorization (Super Admin, Admin, Customer)**
+-  **Unit & Feature Testing with PHPUnit**
 
 ---
 
@@ -88,3 +89,13 @@ Run **PHPUnit** tests to ensure everything is working.
 ```bash
 php artisan test
 ```
+
+---
+
+## 8. Role-Based Authorization
+
+Super Admin → Create admin users, Manage Users, Products, Categories, Orders
+
+Admin → Manage Products & Categories
+
+Customer → View Products, Place Orders, track there own orders
