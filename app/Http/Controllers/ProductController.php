@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -38,7 +40,7 @@ class ProductController extends Controller
     {   
         $request->merge([
             'name' => filter_var($request->name, FILTER_SANITIZE_STRING),
-            'slug' => filter_var($request->name, FILTER_SANITIZE_STRING)
+            'slug' => filter_var($request->slug, FILTER_SANITIZE_STRING)
         ]);
         $rules = [  
             'name'              => 'required|string|min:3',
@@ -80,11 +82,11 @@ class ProductController extends Controller
         try {
             $request->merge([
                 'name' => filter_var($request->name, FILTER_SANITIZE_STRING),
-                'slug' => filter_var($request->name, FILTER_SANITIZE_STRING)
+                'slug' => filter_var($request->slug, FILTER_SANITIZE_STRING)
             ]);
             $rules = [
                 'name'              => 'sometimes|required|string',
-                'slug'              => 'required|string|max:255|unique:products,slug|min:3',
+                'slug'              => 'required|string|max:255|min:3|unique:products,slug,' . $id,
                 'price'             => 'sometimes|required|numeric|min:0',
                 'stock_quantity'    => 'sometimes|required|integer|min:0',
                 'categories'        => 'sometimes|array',
@@ -120,6 +122,7 @@ class ProductController extends Controller
     
             $updated = $product->update([
                 'name'              => $request->name ?? $product->name,
+                'slug'              => $request->slug ?? $product->slug,
                 'price'             => $request->price ?? $product->price,
                 'stock_quantity'    => $request->stock_quantity ?? $product->stock_quantity,
                 'images'            => json_encode($existingImages), 
@@ -154,8 +157,10 @@ class ProductController extends Controller
                 }
                 $product->delete(); 
                 return response()->json(['message' => 'Product soft deleted'], 200);
-        }catch (\Exception $e) {
-            return response()->json($e->getMessage());
+        }catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Product not found'], 404);
+        } catch (\Exception $e) {
+            return response()->json([$e->getMessage()],500);
         }
         
     }
