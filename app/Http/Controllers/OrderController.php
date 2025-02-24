@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -74,13 +74,24 @@ class OrderController extends Controller {
 
     /** View Order History (Authenticated Users) **/
     public function index() {
-        $orders = Order::where('user_id', Auth::id())->with('items.product')->get();
-        return response()->json($orders);
+        try {
+                $orders = Order::where('user_id', Auth::id())->with('items.product')->get();
+                return response()->json($orders);
+        } catch (\Exception $e) {
+        
+                return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /** Get Single Order Details    **/
     public function show($id) {
-        $order = Order::where('user_id', Auth::id())->with('items.product')->findOrFail($id);
-        return response()->json($order);
+        try {
+                $order = Order::where('user_id', Auth::id())->with('items.product')->findOrFail($id);
+                return response()->json($order);
+        }catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Order not found'], 404);
+        } catch (\Exception $e) {            
+                return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
