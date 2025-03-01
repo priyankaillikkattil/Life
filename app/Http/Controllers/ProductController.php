@@ -47,6 +47,7 @@ class ProductController extends Controller
             'price'             => 'required|numeric|min:0',
             'slug'              => 'required|string|max:255|unique:products|min:3',
             'stock_quantity'    => 'required|integer|min:1|min:0',
+            'description'       => 'nullable|string|max:1000',
             'images.*'          => 'image|mimes:jpeg,png,jpg|max:2048',
             'categories'        => 'required|array', 
             'categories.*'      => 'exists:categories,id',
@@ -87,6 +88,7 @@ class ProductController extends Controller
             $rules = [
                 'name'              => 'sometimes|required|string',
                 'slug'              => 'required|string|max:255|min:3|unique:products,slug,' . $id,
+                'description'       => 'nullable|string|max:1000',
                 'price'             => 'sometimes|required|numeric|min:0',
                 'stock_quantity'    => 'sometimes|required|integer|min:0',
                 'categories'        => 'sometimes|array',
@@ -115,7 +117,7 @@ class ProductController extends Controller
                 foreach ($request->file('images') as $image) {
                     if ($image->isValid()) {
                         $path = $image->store('products', 'public');
-                        $existingImages[] = $path; 
+                        $existingImages[] = $path;
                     }
                 }
             }
